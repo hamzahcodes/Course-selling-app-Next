@@ -5,6 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
+import SubmitButton from "@/components/SubmitButton"
+
 import {
   Form,
   FormControl,
@@ -95,7 +97,7 @@ export default function Course() {
           )}
         />
 
-        <Button type="submit">Submit</Button>
+        <SubmitButton />
       </form>
     </Form>
   )

@@ -1,7 +1,8 @@
 "use server"
-import { z } from 'zod';
 
+import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
+import { redirect, RedirectType } from "next/navigation";
 import Course from '@/models/Course';
 
 const courseSchema = z.object({
@@ -16,9 +17,6 @@ export async function createCourse(formData: FormData) {
         coursePrice: formData.get('coursePrice'),
         description: formData.get('description'),
     });
-    console.log(courseName);
-    console.log(coursePrice);
-    console.log(description);
 
     try {
         const newCourse = new Course()
@@ -29,9 +27,20 @@ export async function createCourse(formData: FormData) {
         await newCourse.save()
         console.log(newCourse._id);
         revalidatePath('/courses')
-        return JSON.stringify({ message: "Course created successfully!", courseId: newCourse._id })
     } catch (error) {
         console.log(error);
         return {message: 'error creating course'};        
+    }
+    redirect('/courses', RedirectType.replace)
+}
+
+export async function deleteCourse(id: FormData) {
+    const courseId = id.get("id")
+    try {
+        await Course.findByIdAndDelete(courseId)
+        revalidatePath('/courses')
+        return { message: 'Course Deleted' }
+    } catch (error) {
+        return { message: "Error while deleting course"}
     }
 }
