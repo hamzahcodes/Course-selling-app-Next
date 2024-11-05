@@ -10,6 +10,9 @@ import {
 } from "@/components/ui/table"
 import Course from '@/models/Course';
 import { deleteCourse } from "../action";
+import EditCourse from "../edit-course/page";
+import Link from 'next/link';
+
 
 
 export default async function Courses() {
@@ -30,6 +33,21 @@ export default async function Courses() {
             <TableCell className="font-medium">{course.courseName}</TableCell>
             <TableCell>{course.description}</TableCell>
             <TableCell className="text-right">{course.coursePrice}</TableCell>
+            <TableCell>
+              <Link
+                href={{
+                  pathname: `/edit-course`,
+                  query: {
+                    courseId: course._id.toString(),
+                    courseName: course.courseName,
+                    coursePrice: course.coursePrice,
+                    description: course.description
+                  },
+                }}
+              >
+                <Button>Edit</Button>
+              </Link>
+            </TableCell>
             <TableCell>
               <form action={deleteCourse}>
                 <input hidden type="text" name="id" defaultValue={course._id.toString()}/>

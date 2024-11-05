@@ -14,29 +14,35 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { createCourse } from "../action"
+import { useSearchParams } from 'next/navigation';
+import { updateCourse } from "../action"
 
 
-const formSchema = z.object({
+const editCourseSchema = z.object({
+  courseId: z.string().min(2),
   courseName: z.string().min(2).max(50),
   coursePrice: z.coerce.number().min(1),
   description: z.string().min(10).max(100)
 })
 
 
-export default function Course() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      courseName: "",
-      coursePrice: 0,
-      description: ""
-    },
-  })
+export default function EditCourse() {
+    const searchParams  = useSearchParams();
+    const { courseId, courseName, coursePrice, description } = editCourseSchema.parse(Object.fromEntries(searchParams.entries()));
+    
+    const form = useForm<z.infer<typeof editCourseSchema>>({
+        resolver: zodResolver(editCourseSchema),
+        defaultValues: {
+            courseId: courseId,
+            courseName: courseName,
+            coursePrice: coursePrice,
+            description: description
+        },
+      })
 
   return (
-    <Form {...form}>
-      <form action={createCourse} className="space-y-8">
+    <Form {...form}>    
+      <form action={updateCourse} className="space-y-8">
         <FormField
           control={form.control}
           name="courseName"
@@ -87,8 +93,8 @@ export default function Course() {
             </FormItem>
           )}
         />
-
-        <SubmitButton type={'add'}/>
+        <input hidden type="text" name="courseId" defaultValue={courseId}/>
+        <SubmitButton type={"edit"} />
       </form>
     </Form>
   )
